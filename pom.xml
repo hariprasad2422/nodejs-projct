@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>lab-nodejs-app</artifactId>
+    <version>1.0.0</version>
+    <packaging>war</packaging>
+
+    <name>Lab NodeJS App</name>
+    <description>Node.js app packaged as WAR</description>
+
+    <build>
+        <plugins>
+            <!-- Maven WAR Plugin to package Node.js files -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <webResources>
+                        <!-- Include Node.js source -->
+                        <resource>
+                            <directory>${project.basedir}/src</directory>
+                            <targetPath>WEB-INF/nodejs</targetPath>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </resource>
+                        <!-- Include package.json and Dockerfile -->
+                        <resource>
+                            <directory>${project.basedir}</directory>
+                            <targetPath>WEB-INF/nodejs</targetPath>
+                            <includes>
+                                <include>package.json</include>
+                                <include>Dockerfile</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
