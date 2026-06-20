@@ -45,8 +45,8 @@ pipeline {
                     // Build Docker image
                     sh """
                         docker build -t ${REGISTRY}/${IMAGE_NAME}:latest .
-                        echo $DOCKER_PASSWORD | docker login ${REGISTRY} -u $DOCKER_USERNAME --password-stdin
-                        docker push ${REGISTRY}/${IMAGE_NAME}:latest
+                        echo $DOCKER_PASSWORD | docker login ${REGISTRY} -u hariprasad2404 Hariprasad@5396
+                        docker push ${REGISTRY}/$image:latest
                     """
                 }
             }
