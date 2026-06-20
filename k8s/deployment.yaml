@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-nodejs-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lab-nodejs-app
+  template:
+    metadata:
+      labels:
+        app: lab-nodejs-app
+    spec:
+      containers:
+      - name: lab-nodejs-app
+        image: hariprasad2404/lab-nodejs-app:latest
+        ports:
+        - containerPort: 3000
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
