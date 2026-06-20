@@ -2,17 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-3.9.6'   // Name from Global Tool Configuration
-        jdk 'JDK-17'          // Optional: configure JDK if needed
+        maven 'Maven-3.9.6'
+        jdk 'JDK-17'
     }
 
     environment {
         SONARQUBE_ENV = "SonarQubeServer"
-        REGISTRY      = "ghcr.io/your-org-or-username"
+        REGISTRY      = "ghcr.io/hariprasad2404"
         IMAGE_NAME    = "lab-nodejs-app"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -42,11 +43,26 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    // Build Docker image
                     sh """
                         docker build -t ${REGISTRY}/${IMAGE_NAME}:latest .
-                        echo $DOCKER_PASSWORD | docker login ${REGISTRY} -u hariprasad2404 Hariprasad@5396
-                        docker push ${REGISTRY}/$image:latest
+
+                        echo "Hariprasad@100" | docker login ${REGISTRY} \
+                        -u hariprasad2404 --password-stdin
+
+                        docker push ${REGISTRY}/${IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh """
+                        kubectl set image deployment/nodejs-deployment \
+                        nodejs-container=${REGISTRY}/${IMAGE_NAME}:latest
+
+                        kubectl rollout status deployment/nodejs-deployment
                     """
                 }
             }
@@ -55,10 +71,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build, SonarQube analysis, and Docker image push completed successfully!'
+            echo '✅ Pipeline completed successfully (Build + Sonar + Docker + K8s Deploy)'
         }
         failure {
-            echo '❌ Pipeline failed. Check logs for details.'
+            echo '❌ Pipeline failed. Check logs.'
         }
     }
 }
