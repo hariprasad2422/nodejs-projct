@@ -8,6 +8,8 @@ pipeline {
 
     environment {
         SONARQUBE_ENV = "SonarQubeServer"
+        REGISTRY      = "ghcr.io/your-org-or-username"
+        IMAGE_NAME    = "lab-nodejs-app"
     }
 
     stages {
@@ -36,11 +38,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh """
+                        docker build -t ${REGISTRY}/${IMAGE_NAME}:latest .
+                        echo $DOCKER_PASSWORD | docker login ${REGISTRY} -u $DOCKER_USERNAME --password-stdin
+                        docker push ${REGISTRY}/${IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Build and SonarQube analysis completed successfully!'
+            echo '✅ Build, SonarQube analysis, and Docker image push completed successfully!'
         }
         failure {
             echo '❌ Pipeline failed. Check logs for details.'
